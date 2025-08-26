@@ -6,14 +6,14 @@ import {InterestRateModel} from "./InterestRateModel.sol";
 contract JumpRateModel is InterestRateModel {
     uint public blocksPerYear;
     uint private constant BASE = 1e18; // 100%
-    
+
     uint public multiplierPerBlock;
     uint public baseRatePerBlock;
     uint public jumpMultiplierPerBlock;
     uint public kink;
-    
+
     constructor(
-        uint baseRatePerYear,
+        uint baseRatePerYear, // 기본 이자율 (scaled by 1e18)
         uint multiplierPerYear,
         uint jumpMultiplierPerYear,
         uint kink_
@@ -28,23 +28,24 @@ contract JumpRateModel is InterestRateModel {
         jumpMultiplierPerBlock = jumpMultiplierPerYear / blocksPerYear;
         kink = kink_;
     }
-    
+
     function getBorrowRate(
         uint cash,
         uint borrows,
         uint reserves
     ) external view override returns (uint) {
         uint util = utilizationRate(cash, borrows, reserves);
-        
+
         if (util <= kink) {
             return ((util * multiplierPerBlock) / BASE) + baseRatePerBlock;
         } else {
-            uint normalRate = ((kink * multiplierPerBlock) / BASE) + baseRatePerBlock;
+            uint normalRate = ((kink * multiplierPerBlock) / BASE) +
+                baseRatePerBlock;
             uint excessUtil = util - kink;
             return ((excessUtil * jumpMultiplierPerBlock) / BASE) + normalRate;
         }
     }
-    
+
     function getSupplyRate(
         uint cash,
         uint borrows,
@@ -56,7 +57,7 @@ contract JumpRateModel is InterestRateModel {
         uint rateToPool = (borrowRate * oneMinusReserveFactor) / BASE;
         return (utilizationRate(cash, borrows, reserves) * rateToPool) / BASE;
     }
-    
+
     function utilizationRate(
         uint cash,
         uint borrows,
