@@ -17,7 +17,7 @@ contract Token is ERC20 {
         uint256 initialSupply,
         address owner
     ) ERC20(name, symbol) {
-        _mint(owner, initialSupply * 10 ** decimals());
+        _mint(owner, initialSupply);
 
         int chainId;
 
