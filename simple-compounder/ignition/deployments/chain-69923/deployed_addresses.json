@@ -1,0 +1,5 @@
+{
+  "SimpleCompounderModule#SimplePriceOracle": "0x7127928923aB4958eF16a5125411a5a4039C5D5E",
+  "SimpleCompounderModule#JumpRateModel": "0xf3De46560196a4B507A13bE901bdF914d203895f",
+  "SimpleCompounderModule#Comptroller": "0x05C613C70367e28b63EC5F89EB848Be7585d7187"
+}
